@@ -1,4 +1,5 @@
 
+from typing import final
 import numpy
 from numpy.core.fromnumeric import ndim
 import scipy.special
@@ -27,8 +28,22 @@ class neuralNetwork:
 
 
     # train the network
-    def train():
-        pass
+    def train(self, inputs_list, targets_list):
+        inputs = numpy.array(inputs_list, ndmin=2).T
+        targets = numpy.array(targets_list, ndmin=2).T
+        
+        hidden_outputs = self.activation_func(numpy.dot(self.wih, inputs))
+        final_outputs = self.query(inputs_list)
+
+		# calculate error (target - actual)
+        output_errors = targets - final_outputs
+
+		# hidden layer error is output erros split by weights at hidden nodes
+        hidden_errors = numpy.dot(self.who, output_errors)
+
+		# update weights for layers
+        self.who += self.lr * numpy.dot((output_errors * final_outputs * (1.0 - final_outputs)), numpy.transpose(inputs))
+        self.who += self.lr * numpy.dot((output_errors * final_outputs * (1.0 - final_outputs)), numpy.transpose(hidden_outputs))
 
     # query the network
     def query(self, inputs_list):
